@@ -1,0 +1,83 @@
+package com.banking.api_gateway.security;
+ 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+
+import org.springframework.http.HttpHeaders;
+
+import org.springframework.http.HttpStatus;
+
+import org.springframework.stereotype.Component;
+
+import org.springframework.web.server.ServerWebExchange;
+ 
+import io.jsonwebtoken.Claims;
+
+import reactor.core.publisher.Mono;
+ 
+@Component
+
+public class JwtAuthenticationFilter
+
+        extends AbstractGatewayFilterFactory<Object> {
+ 
+    @Autowired
+
+    private JwtUtil jwtUtil;
+ 
+    @Override
+
+    public GatewayFilter apply(Object config) {
+ 
+        return (exchange, chain) -> {
+ 
+            String authHeader = exchange.getRequest()
+
+                    .getHeaders()
+
+                    .getFirst(HttpHeaders.AUTHORIZATION);
+ 
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+                return unauthorized(exchange);
+
+            }
+ 
+            String token = authHeader.substring(7);
+ 
+            try {
+
+                Claims claims = jwtUtil.extractClaims(token);
+ 
+                if (jwtUtil.isTokenExpired(claims)) {
+
+                    return unauthorized(exchange);
+
+                }
+ 
+            } catch (Exception e) {
+
+                return unauthorized(exchange);
+
+            }
+ 
+            return chain.filter(exchange);
+
+        };
+
+    }
+ 
+    private Mono<Void> unauthorized(ServerWebExchange exchange) {
+
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+        return exchange.getResponse().setComplete();
+
+    }
+
+}
+
+ 
