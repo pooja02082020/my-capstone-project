@@ -1,32 +1,33 @@
-import PageLayout from "../../components/PageLayout";
-import "../../styles/dashboard.css";
-
 export default function AdminDashboard() {
   return (
-    <PageLayout>
+    <div className="page">
       <h1 className="page-title">Admin Dashboard</h1>
+      <p className="page-subtitle">
+        Employee management and high-level monitoring (role-based access).
+      </p>
 
-      <div className="card-grid">
-        <div className="card">
-          <h3>Total Users</h3>
-          <p>120</p>
+      <div className="grid-4">
+        <div className="card stat">
+          <div className="stat-label">Employees</div>
+          <div className="stat-value">—</div>
+          <div className="stat-hint">From /admin/employees</div>
         </div>
-
-        <div className="card">
-          <h3>Employees</h3>
-          <p>15</p>
+        <div className="card stat">
+          <div className="stat-label">Services</div>
+          <div className="stat-value">4</div>
+          <div className="stat-hint">Eureka registered</div>
         </div>
-
-        <div className="card">
-          <h3>Total Transactions</h3>
-          <p>8,430</p>
+        <div className="card stat">
+          <div className="stat-label">System Status</div>
+          <div className="stat-value ok">UP</div>
+          <div className="stat-hint">Gateway routing</div>
         </div>
-
-        <div className="card">
-          <h3>Active Accounts</h3>
-          <p>310</p>
+        <div className="card stat">
+          <div className="stat-label">Security</div>
+          <div className="stat-value">JWT</div>
+          <div className="stat-hint">Role based</div>
         </div>
       </div>
-    </PageLayout>
+    </div>
   );
 }

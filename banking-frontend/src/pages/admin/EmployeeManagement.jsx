@@ -1,13 +1,16 @@
-import { useState } from "react";
-import PageLayout from "../../components/PageLayout";
-
-const initial = [
-  { id: 1, username: "emp1", email: "emp1@test.com", department: "Loans", designation: "Associate" },
-  { id: 2, username: "emp2", email: "emp2@test.com", department: "Support", designation: "Officer" },
-];
+import { useEffect, useState } from "react";
+import {
+  listEmployeesApi,
+  createEmployeeApi,
+  updateEmployeeApi,
+  deleteEmployeeApi,
+} from "../../api/adminApi";
 
 export default function EmployeeManagement() {
-  const [employees, setEmployees] = useState(initial);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -16,155 +19,140 @@ export default function EmployeeManagement() {
     designation: "",
   });
 
-  const [editingId, setEditingId] = useState(null);
-
-  const submit = (e) => {
-    e.preventDefault();
-
-    if (!editingId) {
-      setEmployees([{ id: Date.now(), ...form }, ...employees]);
-    } else {
-      setEmployees(
-        employees.map((e) => (e.id === editingId ? { ...e, ...form, id: editingId } : e))
-      );
-      setEditingId(null);
+  async function load() {
+    setErr("");
+    setLoading(true);
+    try {
+      const res = await listEmployeesApi();
+      setRows(res.data || []);
+    } catch (e) {
+      setErr(e?.response?.data?.message || e.message || "Failed to load employees");
+    } finally {
+      setLoading(false);
     }
+  }
 
-    setForm({ username: "", email: "", password: "", department: "", designation: "" });
-  };
+  useEffect(() => {
+    load();
+  }, []);
 
-  const edit = (emp) => {
-    setEditingId(emp.id);
-    setForm({
-      username: emp.username,
-      email: emp.email,
-      password: "",
-      department: emp.department,
-      designation: emp.designation,
-    });
-  };
+  async function handleCreate(e) {
+    e.preventDefault();
+    setErr("");
+    try {
+      await createEmployeeApi(form);
+      setForm({ username: "", email: "", password: "", department: "", designation: "" });
+      await load();
+    } catch (e2) {
+      setErr(e2?.response?.data?.message || e2.message || "Create failed");
+    }
+  }
 
-  const del = (id) => setEmployees(employees.filter((e) => e.id !== id));
+  async function handleDelete(id) {
+    if (!confirm("Delete employee?")) return;
+    setErr("");
+    try {
+      await deleteEmployeeApi(id);
+      await load();
+    } catch (e2) {
+      setErr(e2?.response?.data?.message || e2.message || "Delete failed");
+    }
+  }
 
   return (
-    <PageLayout title="Employee Management">
-      <div className="grid-2">
-        <div className="card">
-          <div className="card-header">{editingId ? "Update Employee" : "Create Employee"}</div>
-          <div className="card-body">
-            <form onSubmit={submit}>
-              <div className="form-row">
-                <input
-                  className="input"
-                  placeholder="Username"
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  required
-                />
-                <input
-                  className="input"
-                  placeholder="Email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                />
-              </div>
+    <div className="page">
+      <h1 className="page-title">Employee Management</h1>
+      <p className="page-subtitle">Admin can create/update/delete employees.</p>
 
-              <div style={{ height: 10 }} />
+      {err && <div className="alert error">{err}</div>}
 
-              <input
-                className="input"
-                placeholder="Password (required for create)"
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                required={!editingId}
-              />
+      <div className="card">
+        <h3 className="section-title">Create Employee</h3>
 
-              <div style={{ height: 10 }} />
+        <form className="form-grid" onSubmit={handleCreate}>
+          <input
+            placeholder="Username"
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            required
+          />
+          <input
+            placeholder="Email"
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            required
+          />
+          <input
+            placeholder="Temp Password"
+            type="password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
+          />
+          <input
+            placeholder="Department"
+            value={form.department}
+            onChange={(e) => setForm({ ...form, department: e.target.value })}
+            required
+          />
+          <input
+            placeholder="Designation"
+            value={form.designation}
+            onChange={(e) => setForm({ ...form, designation: e.target.value })}
+            required
+          />
+          <button className="btn-primary" type="submit">
+            Create
+          </button>
+        </form>
+      </div>
 
-              <div className="form-row">
-                <input
-                  className="input"
-                  placeholder="Department"
-                  value={form.department}
-                  onChange={(e) => setForm({ ...form, department: e.target.value })}
-                  required
-                />
-                <input
-                  className="input"
-                  placeholder="Designation"
-                  value={form.designation}
-                  onChange={(e) => setForm({ ...form, designation: e.target.value })}
-                  required
-                />
-              </div>
+      <div className="card">
+        <h3 className="section-title">Employees</h3>
 
-              <div className="form-actions">
-                <button className="btn btn-primary" type="submit">
-                  {editingId ? "Update" : "Create"}
-                </button>
-                {editingId && (
-                  <button
-                    type="button"
-                    className="btn btn-outline"
-                    onClick={() => {
-                      setEditingId(null);
-                      setForm({ username: "", email: "", password: "", department: "", designation: "" });
-                    }}
-                  >
-                    Cancel
-                  </button>
-                )}
-              </div>
-
-              <p className="muted" style={{ marginTop: 10 }}>
-                Later:
-                POST/GET/PUT/DELETE /admin/employees
-              </p>
-            </form>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-header">Employees</div>
-          <div className="card-body">
+        {loading ? (
+          <div className="muted">Loading...</div>
+        ) : (
+          <div className="table-wrap">
             <table className="table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Username</th>
                   <th>Email</th>
                   <th>Department</th>
                   <th>Designation</th>
-                  <th style={{ width: 180 }}>Actions</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {employees.map((e) => (
-                  <tr key={e.id}>
-                    <td>{e.username}</td>
-                    <td>{e.email}</td>
-                    <td>{e.department}</td>
-                    <td>{e.designation}</td>
+                {rows.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.id}</td>
+                    <td>{r.username}</td>
+                    <td>{r.email}</td>
+                    <td>{r.department}</td>
+                    <td>{r.designation}</td>
                     <td>
-                      <button className="btn btn-outline" onClick={() => edit(e)}>
-                        Edit
-                      </button>{" "}
-                      <button className="btn btn-outline" onClick={() => del(e.id)}>
+                      <button className="btn-danger" onClick={() => handleDelete(r.id)}>
                         Delete
                       </button>
                     </td>
                   </tr>
                 ))}
+                {rows.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="muted">
+                      No employees found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
-            <p className="muted" style={{ marginTop: 10 }}>
-              This is mock UI. Backend integration later.
-            </p>
           </div>
-        </div>
+        )}
       </div>
-    </PageLayout>
+    </div>
   );
 }

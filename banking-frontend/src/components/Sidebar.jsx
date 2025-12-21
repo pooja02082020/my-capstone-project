@@ -1,18 +1,37 @@
-import "../styles/sidebar.css";
+import { NavLink } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 export default function Sidebar() {
-  return (
-    <div className="sidebar">
-      <h2 className="sidebar-title">BANK</h2>
+  const { role } = useAuth();
 
-      <ul className="sidebar-menu">
-        <li>Dashboard</li>
-        <li>Accounts</li>
-        <li>Transactions</li>
-        <li>Cards</li>
-        <li>Loans</li>
-        <li>Lockers</li>
-      </ul>
-    </div>
+  const links =
+    role === "ADMIN"
+      ? [
+          { to: "/admin", label: "Dashboard" },
+          { to: "/admin/employees", label: "Employees" },
+        ]
+      : role === "EMPLOYEE"
+      ? [{ to: "/employee", label: "Dashboard" }]
+      : [{ to: "/customer", label: "Dashboard" }];
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-brand">
+        <div className="brand-big">BANK</div>
+        <div className="brand-sub">Portal</div>
+      </div>
+
+      <nav className="sidebar-nav">
+        {links.map((l) => (
+          <NavLink
+            key={l.to}
+            to={l.to}
+            className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
+          >
+            {l.label}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
   );
 }

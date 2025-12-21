@@ -1,12 +1,23 @@
-import "../styles/navbar.css";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 export default function Navbar() {
+  const nav = useNavigate();
+  const { logout, role } = useAuth();
+
+  function handleLogout() {
+    logout();
+    nav("/login");
+  }
+
   return (
     <div className="navbar">
-      <h3>Banking Management System</h3>
-      <div className="navbar-user">
-        <span>Welcome, User</span>
-        <button className="logout-btn">Logout</button>
+      <div className="navbar-title">Banking Management System</div>
+      <div className="navbar-right">
+        <span className="pill">{role || "USER"}</span>
+        <button className="btn-ghost" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </div>
   );

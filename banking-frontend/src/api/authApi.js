@@ -1,4 +1,5 @@
 import api from "./axios";
 
-export const login = (data) => api.post("/auth/login", data);
-export const register = (data) => api.post("/auth/register", data);
+// aligns with backend
+export const registerApi = (payload) => api.post("/auth/register", payload);
+export const loginApi = (payload) => api.post("/auth/login", payload);

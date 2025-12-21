@@ -1,79 +1,40 @@
-import PageLayout from "../../components/PageLayout";
-import "../../styles/dashboard.css";
-
 export default function CustomerDashboard() {
   return (
-    <PageLayout>
+    <div className="page">
       <h1 className="page-title">Customer Dashboard</h1>
+      <p className="page-subtitle">
+        Customer can manage accounts, transfers, and view transaction history.
+      </p>
 
-      {/* Summary cards */}
-      <div className="card-grid">
-        <div className="card">
-          <h3>Total Balance</h3>
-          <p>$12,450.00</p>
+      <div className="grid-4">
+        <div className="card stat">
+          <div className="stat-label">Accounts</div>
+          <div className="stat-value">—</div>
+          <div className="stat-hint">/transactions/accounts/user/{`{userId}`}</div>
         </div>
-
-        <div className="card">
-          <h3>Active Accounts</h3>
-          <p>2</p>
+        <div className="card stat">
+          <div className="stat-label">Balance</div>
+          <div className="stat-value">—</div>
+          <div className="stat-hint">SAVINGS/CURRENT</div>
         </div>
-
-        <div className="card">
-          <h3>Credit Cards</h3>
-          <p>1</p>
+        <div className="card stat">
+          <div className="stat-label">Transfers</div>
+          <div className="stat-value">—</div>
+          <div className="stat-hint">/transactions/transfer</div>
         </div>
-
-        <div className="card">
-          <h3>Loans</h3>
-          <p>0</p>
-        </div>
-      </div>
-
-      {/* Quick actions */}
-      <div className="section">
-        <h2>Quick Actions</h2>
-        <div className="action-buttons">
-          <button>Deposit</button>
-          <button>Withdraw</button>
-          <button>Transfer</button>
+        <div className="card stat">
+          <div className="stat-label">Transactions</div>
+          <div className="stat-value">—</div>
+          <div className="stat-hint">/transactions/history/{`{accountId}`}</div>
         </div>
       </div>
 
-      {/* Recent transactions */}
-      <div className="section">
-        <h2>Recent Transactions</h2>
-
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>2025-03-10</td>
-              <td>Deposit</td>
-              <td>$500</td>
-              <td className="success">SUCCESS</td>
-            </tr>
-            <tr>
-              <td>2025-03-08</td>
-              <td>Transfer</td>
-              <td>$200</td>
-              <td className="success">SUCCESS</td>
-            </tr>
-            <tr>
-              <td>2025-03-05</td>
-              <td>Withdraw</td>
-              <td>$100</td>
-              <td className="pending">PENDING</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="card">
+        <h3 className="section-title">Transaction History (UI placeholder)</h3>
+        <div className="muted">
+          We will connect this to Transaction Service after backend integration.
+        </div>
       </div>
-    </PageLayout>
+    </div>
   );
 }
