@@ -1,13 +1,14 @@
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import "../styles/layout.css";
 
-export default function PageLayout({ title, children }) {
+export default function PageLayout({ children }) {
   return (
-    <div className="app-shell">
+    <div className="layout">
       <Sidebar />
-      <div className="app-main">
-        <Navbar title={title} />
-        <div className="page">{children}</div>
+      <div className="layout-right">
+        <Navbar />
+        <div className="layout-content">{children}</div>
       </div>
     </div>
   );

@@ -1,10 +1,13 @@
-import "../styles/dashboard.css";
+import "../styles/navbar.css";
 
 export default function Navbar() {
   return (
     <div className="navbar">
-      <h2>Banking Management System</h2>
-      <button className="logout-btn">Logout</button>
+      <h3>Banking Management System</h3>
+      <div className="navbar-user">
+        <span>Welcome, User</span>
+        <button className="logout-btn">Logout</button>
+      </div>
     </div>
   );
 }

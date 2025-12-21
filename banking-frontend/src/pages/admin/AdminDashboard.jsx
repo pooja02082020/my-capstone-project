@@ -1,26 +1,30 @@
 import PageLayout from "../../components/PageLayout";
+import "../../styles/dashboard.css";
 
 export default function AdminDashboard() {
   return (
-    <PageLayout title="Admin Dashboard">
-      <div className="grid-2">
+    <PageLayout>
+      <h1 className="page-title">Admin Dashboard</h1>
+
+      <div className="card-grid">
         <div className="card">
-          <div className="card-header">Admin Capabilities</div>
-          <div className="card-body">
-            <ul className="muted" style={{ margin: 0, paddingLeft: 18 }}>
-              <li>Create / update / delete employees</li>
-              <li>System wide monitoring</li>
-              <li>Security and access control oversight</li>
-            </ul>
-          </div>
+          <h3>Total Users</h3>
+          <p>120</p>
         </div>
+
         <div className="card">
-          <div className="card-header">Next Integration</div>
-          <div className="card-body">
-            <p className="muted" style={{ margin: 0 }}>
-              Later connect to: /admin/employees (CRUD) and /transactions/all.
-            </p>
-          </div>
+          <h3>Employees</h3>
+          <p>15</p>
+        </div>
+
+        <div className="card">
+          <h3>Total Transactions</h3>
+          <p>8,430</p>
+        </div>
+
+        <div className="card">
+          <h3>Active Accounts</h3>
+          <p>310</p>
         </div>
       </div>
     </PageLayout>

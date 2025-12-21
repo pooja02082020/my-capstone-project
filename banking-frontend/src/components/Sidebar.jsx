@@ -1,11 +1,11 @@
-import "../styles/dashboard.css";
+import "../styles/sidebar.css";
 
-export default function Sidebar({ role }) {
+export default function Sidebar() {
   return (
     <div className="sidebar">
-      <h3>{role} Menu</h3>
+      <h2 className="sidebar-title">BANK</h2>
 
-      <ul>
+      <ul className="sidebar-menu">
         <li>Dashboard</li>
         <li>Accounts</li>
         <li>Transactions</li>
