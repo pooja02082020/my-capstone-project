@@ -1,37 +1,111 @@
-import PageLayout from "../../components/PageLayout";
+import { 
+  Card, 
+  Typography, 
+  Descriptions, 
+  Button, 
+  Alert, 
+  Row, 
+  Col, 
+  Tag, 
+  Space 
+} from "antd";
+import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
-export default function LockerMyPage() {
-  const locker = { lockerNumber: "L-102", status: "ASSIGNED", assignedDate: "2025-12-01" };
+const { Title, Text } = Typography;
+
+export default function Locker() {
+  const [status, setStatus] = useState("NONE");
+  const [msg, setMsg] = useState("");
+
+  const requestLocker = () => {
+    setStatus("PENDING");
+    setMsg("Locker request submitted successfully. Status updated to Pending.");
+  };
+
+  const statusTag = {
+    NONE: <Tag>Not Assigned</Tag>,
+    PENDING: <Tag color="gold">Pending Approval</Tag>,
+    ACTIVE: <Tag color="green">Active</Tag>,
+  };
 
   return (
-    <PageLayout title="My Locker">
-      <div className="card">
-        <div className="card-header">Locker Information</div>
-        <div className="card-body">
-          <table className="table">
-            <tbody>
-              <tr>
-                <th>Locker Number</th>
-                <td>{locker.lockerNumber}</td>
-              </tr>
-              <tr>
-                <th>Status</th>
-                <td>
-                  <span className="badge success">{locker.status}</span>
-                </td>
-              </tr>
-              <tr>
-                <th>Assigned Date</th>
-                <td>{locker.assignedDate}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <p className="muted" style={{ marginTop: 10 }}>
-            Later: GET /lockers/user/{`{userId}`}
-          </p>
-        </div>
+    <div>
+      {/* Page Header */}
+      <div style={{ marginBottom: 24 }}>
+        <Title level={3} style={{ marginBottom: 0 }}>
+          Locker Service
+        </Title>
+        <Text type="secondary">
+          Secure storage service for your valuables.
+        </Text>
       </div>
-    </PageLayout>
+
+      {msg && (
+        <Alert
+          type="success"
+          showIcon
+          message={msg}
+          style={{ marginBottom: 24 }}
+        />
+      )}
+
+      <Row gutter={[24, 24]}>
+        {/* Locker Info */}
+        <Col xs={24} lg={16}>
+          <Card
+            title={
+              <Space>
+                <LockOutlined />
+                Locker Details
+              </Space>
+            }
+          >
+            <Descriptions bordered column={1} size="middle">
+              <Descriptions.Item label="Locker Status">
+                {statusTag[status]}
+              </Descriptions.Item>
+              <Descriptions.Item label="Branch">
+                Downtown Branch (Mock)
+              </Descriptions.Item>
+              <Descriptions.Item label="Locker ID">
+                {status === "NONE" ? "-" : "LKR-1042"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Access Instructions">
+                Bring valid government-issued ID for locker activation.
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+
+        {/* Actions */}
+        <Col xs={24} lg={8}>
+          <Card title="Actions">
+            <Space direction="vertical" style={{ width: "100%" }} size="middle">
+              <Button
+                type="primary"
+                block
+                disabled={status !== "NONE"}
+                onClick={requestLocker}
+              >
+                Request Locker
+              </Button>
+
+              <Button
+                icon={<PhoneOutlined />}
+                block
+                disabled={status === "NONE"}
+              >
+                Contact Support
+              </Button>
+
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Locker approval is subject to availability and branch verification.
+              </Text>
+            </Space>
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 }

@@ -1,31 +1,37 @@
+import { Card, Table, Tag, Typography } from "antd";
+
+const { Title, Text } = Typography;
+
+const data = [
+  { key: 1, type: "Debit", amount: 200, detail: "Transfer to john@bank.com", status: "Completed" },
+  { key: 2, type: "Credit", amount: 500, detail: "Salary", status: "Completed" },
+  { key: 3, type: "Debit", amount: 56.2, detail: "Card payment - Grocery", status: "Pending" },
+];
+
 export default function Transactions() {
-  const data = [
-    { id: 1, type: "Debit", amount: 200, to: "john@example.com" },
-    { id: 2, type: "Credit", amount: 500, from: "salary" },
+  const columns = [
+    {
+      title: "Type",
+      dataIndex: "type",
+      render: (v) => (v === "Credit" ? <Tag color="green">Credit</Tag> : <Tag color="red">Debit</Tag>),
+    },
+    { title: "Amount", dataIndex: "amount", render: (v) => `$${v}` },
+    { title: "Details", dataIndex: "detail" },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (v) => (v === "Completed" ? <Tag color="blue">Completed</Tag> : <Tag color="gold">Pending</Tag>),
+    },
   ];
 
   return (
-    <div className="card">
-      <h2>Transactions</h2>
+    <div>
+      <Title level={3} style={{ marginTop: 0 }}>Transactions</Title>
+      <Text type="secondary">View your recent transaction history.</Text>
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((t) => (
-            <tr key={t.id}>
-              <td>{t.type}</td>
-              <td>${t.amount}</td>
-              <td>{t.to || t.from}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Card style={{ marginTop: 16 }}>
+        <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+      </Card>
     </div>
   );
 }

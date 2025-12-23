@@ -1,73 +1,131 @@
-import { useState } from "react";
-import PageLayout from "../../components/PageLayout";
+import { Card, Table, Button, Modal, Form, Input, Space, Typography, Tag } from "antd";
+import { useMemo, useState } from "react";
 
-const allTx = [
-  { id: "TXN-2001", type: "TRANSFER", amount: 1200, status: "SUCCESS", userId: 1 },
-  { id: "TXN-2002", type: "DEPOSIT", amount: 300, status: "PENDING", userId: 2 },
-  { id: "TXN-2003", type: "WITHDRAW", amount: 900, status: "FAILED", userId: 2 },
-];
+const { Title, Text } = Typography;
 
-export default function TransactionMonitoringPage() {
-  const [status, setStatus] = useState("ALL");
+export default function CustomerManagement() {
+  const [customers, setCustomers] = useState([
+    { id: 101, name: "Alice Brown", email: "alice@bank.com", status: "Active" },
+    { id: 102, name: "Mark Lee", email: "mark@bank.com", status: "Active" },
+    { id: 103, name: "Nina Shah", email: "nina@bank.com", status: "Inactive" },
+  ]);
 
-  const filtered =
-    status === "ALL" ? allTx : allTx.filter((t) => t.status === status);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [form] = Form.useForm();
+
+  const columns = useMemo(
+    () => [
+      { title: "Customer ID", dataIndex: "id" },
+      { title: "Name", dataIndex: "name" },
+      { title: "Email", dataIndex: "email" },
+      {
+        title: "Status",
+        dataIndex: "status",
+        render: (v) => (v === "Active" ? <Tag color="green">Active</Tag> : <Tag color="red">Inactive</Tag>),
+      },
+      {
+        title: "Action",
+        render: (_, record) => (
+          <Space>
+            <Button
+              onClick={() => {
+                setEditing(record);
+                setOpen(true);
+                form.setFieldsValue(record);
+              }}
+            >
+              Edit
+            </Button>
+            <Button danger onClick={() => setCustomers((prev) => prev.filter((c) => c.id !== record.id))}>
+              Disable
+            </Button>
+          </Space>
+        ),
+      },
+    ],
+    [form]
+  );
+
+  const onAdd = () => {
+    setEditing(null);
+    form.resetFields();
+    setOpen(true);
+  };
+
+  const onSave = async () => {
+    const values = await form.validateFields();
+
+    if (editing) {
+      setCustomers((prev) =>
+        prev.map((c) => (c.id === editing.id ? { ...c, ...values } : c))
+      );
+    } else {
+      const nextId = Math.max(...customers.map((c) => c.id)) + 1;
+      setCustomers((prev) => [
+        ...prev,
+        { id: nextId, status: "Active", ...values },
+      ]);
+    }
+
+    setOpen(false);
+  };
 
   return (
-    <PageLayout title="Transaction Monitoring">
-      <div className="card">
-        <div className="card-header">All Transactions</div>
-        <div className="card-body">
-          <div className="form-row" style={{ gridTemplateColumns: "240px 1fr" }}>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="ALL">ALL</option>
-              <option value="SUCCESS">SUCCESS</option>
-              <option value="FAILED">FAILED</option>
-              <option value="PENDING">PENDING</option>
-            </select>
-            <div className="muted" style={{ alignSelf: "center" }}>
-              Later: GET /transactions/all and /transactions/status/{`{status}`}
-            </div>
-          </div>
+    <div>
+      <Title level={3} style={{ marginTop: 0 }}>
+        Customer Management
+      </Title>
+      <Text type="secondary">
+        View and manage customer records (mock data).
+      </Text>
 
-          <div style={{ height: 12 }} />
-
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Txn ID</th>
-                <th>User ID</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((t) => (
-                <tr key={t.id}>
-                  <td>{t.id}</td>
-                  <td>{t.userId}</td>
-                  <td>{t.type}</td>
-                  <td>${t.amount.toFixed(2)}</td>
-                  <td>
-                    <span
-                      className={
-                        t.status === "SUCCESS"
-                          ? "badge success"
-                          : t.status === "FAILED"
-                          ? "badge danger"
-                          : "badge pending"
-                      }
-                    >
-                      {t.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <Card style={{ marginTop: 16 }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+          <Button type="primary" onClick={onAdd}>
+            Add Customer
+          </Button>
         </div>
-      </div>
-    </PageLayout>
+
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={customers}
+          pagination={{ pageSize: 6 }}
+        />
+
+        <Modal
+          title={editing ? "Edit Customer" : "Add Customer"}
+          open={open}
+          onCancel={() => setOpen(false)}
+          onOk={onSave}
+          okText="Save"
+        >
+          <Form layout="vertical" form={form}>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: "Enter name" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[{ required: true, message: "Enter email" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[{ required: true, message: "Enter status" }]}
+            >
+              <Input placeholder="Active / Inactive" />
+            </Form.Item>
+          </Form>
+        </Modal>
+      </Card>
+    </div>
   );
 }

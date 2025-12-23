@@ -1,85 +1,87 @@
-import { useState } from "react";
+import { Card, Form, Input, Button, Typography } from "antd";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../store/authSlice";
-import { loginApi } from "../api/authApi";
 import { useNavigate, Link } from "react-router-dom";
-import "../styles/auth.css";
+import { loginSuccess } from "../store/authSlice";
+import { authService } from "./authService";
+import logo from "../images/logo.png";
+
+const { Title, Text } = Typography;
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const onFinish = async (values) => {
+    const res = await authService.login(values.email, values.password);
+    dispatch(loginSuccess(res));
+    if (res.role === "ADMIN") navigate("/admin");
+    else if (res.role === "EMPLOYEE") navigate("/employee");
+    else navigate("/customer");
 
-  async function onSubmit(e) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
 
-    try {
-      const data = await loginApi({ email, password });
-      dispatch(loginSuccess(data));
-
-      // route based on role
-      if (data.role === "ADMIN") navigate("/admin");
-      else if (data.role === "EMPLOYEE") navigate("/employee");
-      else navigate("/customer");
-    } catch (err) {
-      setError(err.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  }
+  };
 
   return (
-    <div className="authWrap">
-      <div className="authBg" />
-
-      <div className="authCard">
-        <div className="authHeader">
-          <div className="badgeGlow">🔐</div>
-          <h1>Welcome Back</h1>
-          <p>Sign in to access your banking dashboard</p>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#f7f8fc",
+      }}
+    >
+      <Card
+        style={{
+          width: 380,
+          borderRadius: 16,
+          boxShadow: "0 20px 40px rgba(124,108,246,0.15)",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <img src={logo} alt="logo" style={{ width: 60 }} />
+          <Title level={3} style={{ marginTop: 12 }}>
+            Bank Management
+          </Title>
+          <Text type="secondary">Secure role-based access</Text>
         </div>
 
-        <form onSubmit={onSubmit} className="authForm">
-          <label className="field">
-            <span>Email</span>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@bank.com"
-              type="email"
-              required
-            />
-          </label>
+        <Form layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
 
-          <label className="field">
-            <span>Password</span>
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              type="password"
-              required
-            />
-          </label>
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true }]}
+          >
+            <Input.Password />
+          </Form.Item>
 
-          {error && <div className="errorBox">{error}</div>}
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            style={{
+              backgroundColor: "#7c6cf6",
+              borderColor: "#7c6cf6",
+            }}
+          >
+            Login
+          </Button>
+        </Form>
 
-          <button className="btnPrimary" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-
-          <div className="authFooter">
-            <span>New user?</span> <Link to="/register">Create an account</Link>
-          </div>
-        </form>
-      </div>
-      
-          </div>
+        <div style={{ marginTop: 16, textAlign: "center" }}>
+          <Text type="secondary">
+            New user? <Link to="/register">Create an account</Link>
+          </Text>
+        </div>
+      </Card>
+    </div>
   );
 }
