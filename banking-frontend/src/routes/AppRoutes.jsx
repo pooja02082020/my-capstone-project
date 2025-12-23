@@ -1,63 +1,34 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
-import Login from "../auth/Login";
-import Register from "../auth/Register";
-import ProtectedRoute from "../auth/ProtectedRoute";
-
 import PageLayout from "../components/PageLayout";
+
+import CustomerDashboard from "../pages/customer/CustomerDashboard";
+import TransferFunds from "../pages/customer/TransferFunds";
+import Transactions from "../pages/customer/Transactions";
 
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import EmployeeManagement from "../pages/admin/EmployeeManagement";
-import CustomerDashboard from "../pages/customer/CustomerDashboard";
+
 import EmployeeDashboard from "../pages/employee/EmployeeDashboard";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/customer" element={<PageLayout />}>
+        <Route index element={<CustomerDashboard />} />
+        <Route path="transfer" element={<TransferFunds />} />
+        <Route path="transactions" element={<Transactions />} />
+      </Route>
 
-      {/* Admin */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <PageLayout />
-          </ProtectedRoute>
-        }
-      >
+      <Route path="/admin" element={<PageLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path="employees" element={<EmployeeManagement />} />
       </Route>
 
-      {/* Employee */}
-      <Route
-        path="/employee"
-        element={
-          <ProtectedRoute allowedRoles={["EMPLOYEE"]}>
-            <PageLayout />
-          </ProtectedRoute>
-        }
-      >
+      <Route path="/employee" element={<PageLayout />}>
         <Route index element={<EmployeeDashboard />} />
       </Route>
 
-      {/* Customer */}
-      <Route
-        path="/customer"
-        element={
-          <ProtectedRoute allowedRoles={["CUSTOMER"]}>
-            <PageLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<CustomerDashboard />} />
-      </Route>
-
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/customer" />} />
     </Routes>
   );
 }

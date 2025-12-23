@@ -1,24 +1,33 @@
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/authSlice";
 
 export default function Navbar() {
-  const nav = useNavigate();
-  const { logout, role } = useAuth();
-
-  function handleLogout() {
-    logout();
-    nav("/login");
-  }
+  const dispatch = useDispatch();
+  const { user, role } = useSelector((s) => s.auth);
 
   return (
-    <div className="navbar">
-      <div className="navbar-title">Banking Management System</div>
-      <div className="navbar-right">
-        <span className="pill">{role || "USER"}</span>
-        <button className="btn-ghost" onClick={handleLogout}>
+    <header className="topbar">
+      <div className="topbarLeft">
+        <div className="brandDot" />
+        <div>
+          <div className="brandTitle">Banking Management</div>
+          <div className="brandSubtitle">Role-based SPA</div>
+        </div>
+      </div>
+
+      <div className="topbarRight">
+        <div className="userChip">
+          <div className="avatar">{(user?.name?.[0] || "U").toUpperCase()}</div>
+          <div className="userMeta">
+            <div className="userName">{user?.name || "User"}</div>
+            <div className="userRole">{role}</div>
+          </div>
+        </div>
+
+        <button className="btnGhost" onClick={() => dispatch(logout())}>
           Logout
         </button>
       </div>
-    </div>
+    </header>
   );
 }

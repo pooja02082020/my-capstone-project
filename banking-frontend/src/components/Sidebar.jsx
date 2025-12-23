@@ -1,34 +1,34 @@
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useSelector } from "react-redux";
 
 export default function Sidebar() {
-  const { role } = useAuth();
+  const role = useSelector((s) => s.auth?.role);
 
-  const links =
-    role === "ADMIN"
-      ? [
-          { to: "/admin", label: "Dashboard" },
-          { to: "/admin/employees", label: "Employees" },
-        ]
-      : role === "EMPLOYEE"
-      ? [{ to: "/employee", label: "Dashboard" }]
-      : [{ to: "/customer", label: "Dashboard" }];
+  const menu = {
+    CUSTOMER: [
+      { to: "/customer", label: "Dashboard" },
+      { to: "/customer/transfer", label: "Transfer Funds" },
+      { to: "/customer/transactions", label: "Transactions" },
+    ],
+    ADMIN: [
+      { to: "/admin", label: "Dashboard" },
+      { to: "/admin/employees", label: "Manage Employees" },
+    ],
+    EMPLOYEE: [
+      { to: "/employee", label: "Dashboard" },
+    ],
+  };
+
+  const items = menu[role] || menu["CUSTOMER"]; //  fallback
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-brand">
-        <div className="brand-big">BANK</div>
-        <div className="brand-sub">Portal</div>
-      </div>
+      <h2>BankSys</h2>
 
-      <nav className="sidebar-nav">
-        {links.map((l) => (
-          <NavLink
-            key={l.to}
-            to={l.to}
-            className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
-          >
-            {l.label}
+      <nav>
+        {items.map((item) => (
+          <NavLink key={item.to} to={item.to} className="navItem">
+            {item.label}
           </NavLink>
         ))}
       </nav>

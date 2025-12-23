@@ -1,16 +1,17 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import "../styles/dashboard.css";
 
 export default function PageLayout() {
   return (
-    <div className="app-shell">
+    <div className="appShell">
       <Sidebar />
-      <div className="app-main">
+      <div className="appMain">
         <Navbar />
-        <div className="app-content">
+        <main className="appContent">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

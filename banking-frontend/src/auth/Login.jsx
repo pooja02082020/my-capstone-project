@@ -1,91 +1,85 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../store/authSlice";
 import { loginApi } from "../api/authApi";
-import { useAuth } from "./AuthContext";
-import logo from "../images/logo.png";
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/auth.css";
 
 export default function Login() {
-  const nav = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
+  const [error, setError] = useState("");
 
   async function onSubmit(e) {
     e.preventDefault();
-    setErr("");
+    setError("");
     setLoading(true);
 
     try {
-      const res = await loginApi({ username, password });
+      const data = await loginApi({ email, password });
+      dispatch(loginSuccess(data));
 
-      // your backend returns: { token: "..." } or { jwt: "..." } – handle both
-      const token = res.data.token || res.data.jwt || res.data.accessToken;
-      if (!token) throw new Error("Token not found in response");
-
-      login(token);
-
-      // redirect based on role (stored by AuthContext from token)
-      const role = localStorage.getItem("role");
-      if (role === "ADMIN") nav("/admin");
-      else if (role === "EMPLOYEE") nav("/employee");
-      else nav("/customer");
-    } catch (e2) {
-      setErr(e2?.response?.data?.message || e2.message || "Login failed");
+      // route based on role
+      if (data.role === "ADMIN") navigate("/admin");
+      else if (data.role === "EMPLOYEE") navigate("/employee");
+      else navigate("/customer");
+    } catch (err) {
+      setError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <div className="auth-brand">
-          <img className="auth-logo" src={logo} alt="Banking Logo" />
-          <h1>Banking System Login</h1>
-          <p>Secure Access Portal</p>
+    <div className="authWrap">
+      <div className="authBg" />
+
+      <div className="authCard">
+        <div className="authHeader">
+          <div className="badgeGlow">🔐</div>
+          <h1>Welcome Back</h1>
+          <p>Sign in to access your banking dashboard</p>
         </div>
 
-        <form className="auth-form" onSubmit={onSubmit}>
-          <label>
-            Username
+        <form onSubmit={onSubmit} className="authForm">
+          <label className="field">
+            <span>Email</span>
             <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
-              autoComplete="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@bank.com"
+              type="email"
               required
             />
           </label>
 
-          <label>
-            Password
+          <label className="field">
+            <span>Password</span>
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
               type="password"
-              autoComplete="current-password"
               required
             />
           </label>
 
-          {err && <div className="auth-error">{err}</div>}
+          {error && <div className="errorBox">{error}</div>}
 
-          <button className="btn-primary" type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+          <button className="btnPrimary" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
           </button>
-        </form>
 
-        <div className="auth-footer">
-          <span>First time user?</span>{" "}
-          <Link to="/register" className="auth-link">
-            Create an account
-          </Link>
-        </div>
+          <div className="authFooter">
+            <span>New user?</span> <Link to="/register">Create an account</Link>
+          </div>
+        </form>
       </div>
-    </div>
+      
+          </div>
   );
 }
