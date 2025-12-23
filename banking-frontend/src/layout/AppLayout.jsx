@@ -22,12 +22,15 @@ export default function AppLayout() {
 
   const [logoutOpen, setLogoutOpen] = useState(false);
 
-  const selectedKey =
-    items.find(
-      (item) =>
-        location.pathname === item.key ||
-        location.pathname.startsWith(item.key + "/")
-    )?.key || items[0]?.key;
+  const selectedKey = items
+  .slice()
+  .sort((a, b) => b.key.length - a.key.length) // longest path first
+  .find(
+    (item) =>
+      location.pathname === item.key ||
+      location.pathname.startsWith(item.key + "/")
+  )?.key;
+
 
   const handleLogout = () => {
     dispatch(logout());

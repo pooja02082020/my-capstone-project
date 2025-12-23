@@ -1,13 +1,13 @@
-import { Card, Table, Button, Modal, Form, Input, Space, Typography } from "antd";
+import { Card, Table, Button, Modal, Form, Input, Select, Space, Typography, Tag } from "antd";
 import { useMemo, useState } from "react";
 
 const { Title, Text } = Typography;
 
 export default function EmployeeEmployeeManagement() {
   const [rows, setRows] = useState([
-    { id: 1, name: "Sam", email: "sam@bank.com", status: "Active" },
+    { id: 1, name: "Pooja", email: "pooja@bank.com", status: "Active" },
     { id: 2, name: "Rita", email: "rita@bank.com", status: "Active" },
-    { id: 3, name: "John", email: "john@bank.com", status: "Inactive" },
+    { id: 3, name: "Simran", email: "simran@bank.com", status: "Inactive" },
   ]);
 
   const [open, setOpen] = useState(false);
@@ -19,7 +19,15 @@ export default function EmployeeEmployeeManagement() {
       { title: "ID", dataIndex: "id" },
       { title: "Name", dataIndex: "name" },
       { title: "Email", dataIndex: "email" },
-      { title: "Status", dataIndex: "status" },
+      {
+        title: "Status",
+        dataIndex: "status",
+        render: (status) => (
+          <Tag color={status === "Active" ? "green" : "red"}>
+            {status}
+          </Tag>
+        ),
+      },
       {
         title: "Action",
         render: (_, record) => (
@@ -63,7 +71,7 @@ export default function EmployeeEmployeeManagement() {
   return (
     <div>
       <Title level={3} style={{ marginTop: 0 }}>Employee Management</Title>
-      <Text type="secondary">Manage employee records (mock local state).</Text>
+      <Text type="secondary">Manage employee records.</Text>
 
       <Card style={{ marginTop: 16 }}>
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
@@ -86,9 +94,20 @@ export default function EmployeeEmployeeManagement() {
             <Form.Item name="email" label="Email" rules={[{ required: true, message: "Enter email" }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="status" label="Status" rules={[{ required: true, message: "Enter status" }]}>
-              <Input placeholder="Active / Inactive" />
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[{ required: true, message: "Select status" }]}
+            >
+              <Select
+                placeholder="Select status"
+                options={[
+                  { value: "Active", label: "Active" },
+                  { value: "Inactive", label: "Inactive" },
+                ]}
+              />
             </Form.Item>
+
           </Form>
         </Modal>
       </Card>
