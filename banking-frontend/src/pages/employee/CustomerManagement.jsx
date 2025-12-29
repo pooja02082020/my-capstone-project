@@ -1,4 +1,5 @@
-import { Card, Table, Button, Modal, Form, Input, Space, Typography, Tag } from "antd";
+import { Card, Table, Button, Modal, Form, Input, Space, Typography, Badge } from "antd";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMemo, useState } from "react";
 
 const { Title, Text } = Typography;
@@ -14,115 +15,44 @@ export default function CustomerManagement() {
   const [editing, setEditing] = useState(null);
   const [form] = Form.useForm();
 
-  const columns = useMemo(
-    () => [
-      { title: "Customer ID", dataIndex: "id" },
-      { title: "Name", dataIndex: "name" },
-      { title: "Email", dataIndex: "email" },
-      {
-        title: "Status",
-        dataIndex: "status",
-        render: (v) => (v === "Active" ? <Tag color="green">Active</Tag> : <Tag color="red">Inactive</Tag>),
-      },
-      {
-        title: "Action",
-        render: (_, record) => (
-          <Space>
-            <Button
-              onClick={() => {
-                setEditing(record);
-                setOpen(true);
-                form.setFieldsValue(record);
-              }}
-            >
-              Edit
-            </Button>
-            <Button danger onClick={() => setCustomers((prev) => prev.filter((c) => c.id !== record.id))}>
-              Disable
-            </Button>
-          </Space>
-        ),
-      },
-    ],
-    [form]
-  );
-
-  const onAdd = () => {
-    setEditing(null);
-    form.resetFields();
-    setOpen(true);
-  };
-
-  const onSave = async () => {
-    const values = await form.validateFields();
-
-    if (editing) {
-      setCustomers((prev) =>
-        prev.map((c) => (c.id === editing.id ? { ...c, ...values } : c))
-      );
-    } else {
-      const nextId = Math.max(...customers.map((c) => c.id)) + 1;
-      setCustomers((prev) => [
-        ...prev,
-        { id: nextId, status: "Active", ...values },
-      ]);
+  const columns = useMemo(() => [
+    { title: "ID", dataIndex: "id", width: 80 },
+    { title: "Name", dataIndex: "name" },
+    { title: "Email", dataIndex: "email" },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: v => <Badge status={v === "Active" ? "success" : "error"} text={v} />
+    },
+    {
+      title: "Action",
+      render: (_, record) => (
+        <Space>
+          <Button onClick={() => { setEditing(record); setOpen(true); form.setFieldsValue(record); }} icon={<EditOutlined />}>Edit</Button>
+          <Button danger={record.status === "Active"} onClick={() => setCustomers(p => p.map(c => c.id === record.id ? { ...c, status: c.status === "Active" ? "Inactive" : "Active" } : c))}>
+            {record.status === "Active" ? "Disable" : "Enable"}
+          </Button>
+        </Space>
+      )
     }
-
-    setOpen(false);
-  };
+  ], [form]);
 
   return (
     <div>
-      <Title level={3} style={{ marginTop: 0 }}>
-        Customer Management
-      </Title>
-      <Text type="secondary">
-        View and manage customer records (mock data).
-      </Text>
+      <Title level={3}>Customer Management</Title>
+      <Text type="secondary">Manage customers (mock data)</Text>
 
       <Card style={{ marginTop: 16 }}>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-          <Button type="primary" onClick={onAdd}>
-            Add Customer
-          </Button>
-        </div>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditing(null); form.resetFields(); setOpen(true); }} style={{ marginBottom: 12 }}>
+          Add Customer
+        </Button>
 
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={customers}
-          pagination={{ pageSize: 6 }}
-        />
+        <Table rowKey="id" columns={columns} dataSource={customers} pagination={false} />
 
-        <Modal
-          title={editing ? "Edit Customer" : "Add Customer"}
-          open={open}
-          onCancel={() => setOpen(false)}
-          onOk={onSave}
-          okText="Save"
-        >
+        <Modal title={editing ? "Edit Customer" : "Add Customer"} open={open} onCancel={() => setOpen(false)} onOk={async () => { const v = await form.validateFields(); setCustomers(p => editing ? p.map(c => c.id === editing.id ? { ...c, ...v } : c) : [...p, { id: Math.max(...p.map(c => c.id)) + 1, status: "Active", ...v }]); setOpen(false); }}>
           <Form layout="vertical" form={form}>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[{ required: true, message: "Enter name" }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[{ required: true, message: "Enter email" }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="status"
-              label="Status"
-              rules={[{ required: true, message: "Enter status" }]}
-            >
-              <Input placeholder="Active / Inactive" />
-            </Form.Item>
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}><Input /></Form.Item>
+            <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}><Input /></Form.Item>
           </Form>
         </Modal>
       </Card>
