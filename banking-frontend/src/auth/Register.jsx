@@ -20,19 +20,21 @@ export default function Register() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#f7f8fc",
+        background: "linear-gradient(135deg, #667eea, #64d2b3)",
       }}
     >
       <Card
         style={{
           width: 420,
-          borderRadius: 16,
-          boxShadow: "0 20px 40px rgba(124,108,246,0.15)",
+          borderRadius: 18,
+          boxShadow: "0 25px 60px rgba(0,0,0,0.15)",
+          border: "1px solid rgba(255,255,255,0.3)",
+          backdropFilter: "blur(10px)",
         }}
       >
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <img src={logo} alt="logo" style={{ width: 60 }} />
-          <Title level={3} style={{ marginTop: 12 }}>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <img src={logo} alt="logo" style={{ width: 64 }} />
+          <Title level={3} style={{ marginTop: 14, color: "#3f3d56" }}>
             Create Account
           </Title>
           <Text type="secondary">Register to access the system</Text>
@@ -40,11 +42,11 @@ export default function Register() {
 
         <Form layout="vertical" onFinish={onFinish}>
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder="Enter your name" />
           </Form.Item>
 
           <Form.Item name="email" label="Email" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder="Enter your email" />
           </Form.Item>
 
           <Form.Item
@@ -52,15 +54,12 @@ export default function Register() {
             label="Password"
             rules={[{ required: true }]}
           >
-            <Input.Password />
+            <Input.Password placeholder="Create a password" />
           </Form.Item>
 
-          <Form.Item
-            name="role"
-            label="Role"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="role" label="Role" rules={[{ required: true }]}>
             <Select
+              placeholder="Select role"
               options={[
                 { value: "CUSTOMER", label: "Customer" },
                 { value: "EMPLOYEE", label: "Employee" },
@@ -74,17 +73,23 @@ export default function Register() {
             htmlType="submit"
             block
             style={{
-              backgroundColor: "#7c6cf6",
-              borderColor: "#7c6cf6",
+              height: 44,
+              fontWeight: 600,
+              borderRadius: 10,
+              background: "linear-gradient(135deg, #667eea, #64d2b3)",
+              border: "none",
             }}
           >
             Register
           </Button>
         </Form>
 
-        <div style={{ marginTop: 16, textAlign: "center" }}>
+        <div style={{ marginTop: 18, textAlign: "center" }}>
           <Text type="secondary">
-            Already have an account? <Link to="/login">Login</Link>
+            Already have an account?{" "}
+            <Link to="/login" style={{ color: "#667eea", fontWeight: 500 }}>
+              Login
+            </Link>
           </Text>
         </div>
       </Card>
