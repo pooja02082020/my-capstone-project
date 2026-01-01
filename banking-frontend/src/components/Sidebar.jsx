@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+//COMMON SIDEBAR FOR ALL EMPLOYEES, CUTOMERS AND ADMINS
 export default function Sidebar() {
   const role = useSelector((s) => s.auth?.role);
 
