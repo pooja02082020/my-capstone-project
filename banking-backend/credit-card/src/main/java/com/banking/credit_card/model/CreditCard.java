@@ -83,5 +83,19 @@ public class CreditCard {
 		this.expiryDate = expiryDate;
 	}
 
-    
+	public CreditCard(Long id, String cardNumber, Long userId, Double creditLimit, Double availableLimit,
+			CardStatus cardStatus, LocalDate expiryDate) {
+		super();
+		this.id = id;
+		this.cardNumber = cardNumber;
+		this.userId = userId;
+		this.creditLimit = creditLimit;
+		this.availableLimit = availableLimit;
+		this.cardStatus = cardStatus;
+		this.expiryDate = expiryDate;
+	}
+
+    public CreditCard() {
+    	
+    }
 }

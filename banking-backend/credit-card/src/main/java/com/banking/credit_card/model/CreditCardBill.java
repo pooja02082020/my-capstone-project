@@ -73,4 +73,8 @@ public class CreditCardBill {
 		this.status = status;
 	}
 
+	public CreditCardBill() {
+	}
+
+	
 }
