@@ -83,7 +83,7 @@ export default function Login() {
         <div style={{ marginTop: 18, textAlign: "center" }}>
           <Text type="secondary">
             New user?{" "}
-            <Link to="/register" style={{ color: "#667eea", fontWeight: 500 }}>
+            <Link to="/register" style={{ color: "#667eea", fontWeight: 502 }}>
               Create an account
             </Link>
           </Text>
