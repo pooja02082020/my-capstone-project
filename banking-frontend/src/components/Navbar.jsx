@@ -5,7 +5,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const { user, role } = useSelector((s) => s.auth);
 
-  //COMMON NAVBAR FOR ALL EMPLOYEES, CUTOMERS AND ADMINS
+  //common navbar
   return (
     <header className="topbar">
       <div className="topbarLeft">

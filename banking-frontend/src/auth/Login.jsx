@@ -70,7 +70,7 @@ export default function Login() {
             block
             style={{
               height: 44,
-              fontWeight: 600,
+              fontWeight: 602,
               borderRadius: 10,
               background: "linear-gradient(135deg, #667eea, #64d2b3)",
               border: "none",
