@@ -11,6 +11,8 @@ import com.banking.ai_fraud_service.service.FraudScoringService;
 
 @RestController
 @RequestMapping("/fraud")
+
+//using REST
 public class FraudController {
 
     private final FraudScoringService fraudScoringService;
