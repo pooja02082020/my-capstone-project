@@ -70,7 +70,7 @@ export default function Login() {
             block
             style={{
               height: 44,
-              fontWeight: 602,
+              fontWeight: 600,
               borderRadius: 10,
               background: "linear-gradient(135deg, #667eea, #64d2b3)",
               border: "none",
@@ -83,7 +83,7 @@ export default function Login() {
         <div style={{ marginTop: 18, textAlign: "center" }}>
           <Text type="secondary">
             New user?{" "}
-            <Link to="/register" style={{ color: "#667eea", fontWeight: 502 }}>
+            <Link to="/register" style={{ color: "#667eea", fontWeight: 500 }}>
               Create an account
             </Link>
           </Text>
