@@ -75,7 +75,7 @@ export default function Register() {
             style={{
               height: 44,
               fontWeight: 600,
-              borderRadius: 10,
+              borderRadius: 9,
               background: "linear-gradient(135deg, #667eea, #64d2b3)",
               border: "none",
             }}
